@@ -1,14 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
+import App from './App';
+
+
+ReactDOM.render(                      // on fait un rendu sur le DOM sur l'élément avec l'id 'root'    
+  <React.StrictMode>                  {/* outil qui détecte les problèmes potentiels de ses enfants     */}
+    <App />                           {/* on y intègre le composant "App"                               */}
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById('root')     
 );
 
 // If you want your app to work offline and load faster, you can change
