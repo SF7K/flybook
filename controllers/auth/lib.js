@@ -1,30 +1,42 @@
 const User = require('../../schema/schemaUser.js');
 const passwordHash = require('password-hash');
 
-// Fonction pour checker que l'on reçoit bien un email et un password
-function check(email, password, res) {
-    if(!email || !password) {
-        return res.status(400).json({
-            text: 'Requête invalide'
-        });
-    } 
+module.exports = {
+    register,
+    login,
+  }
+
+// Fonction pour checker que l'on reçoit bien un body complet 
+function body_is_valid(body) {
+    if(!body.email || !body.password) {
+        return false;
+    } else {
+        return true;
+    }
 };
 
 // Création d'une fonction asynchrone pour enregistrer un nouvel utilisateur
 async function register(req, res) {
-    const { password, email } = req.body;
-    check(email, password, res);
+    
+    let body = req.body;
+    
+    // Gestion de l'envoi d'erreur en cas d'un champ non complété
+    if(!body_is_valid(body)) {
+        return res.status(400).json({
+            text: 'Requête invalide'
+          });
+    }
 
     // Création de l'objet user et "hashage" du mot de passe
     const user = {
-        email,
-        password: passwordHash.generate(password),
+        email: body.email,
+        password: passwordHash.generate(body.password),
     }
 
     // On vérifie si l'adresse email est déjà enregistrée dans notre BDD
     try {
         const findUser = await User.findOne({
-            email
+            email: body.email
         });
 
         // si findUser = true alors envoie d'une erreur
@@ -52,17 +64,21 @@ async function register(req, res) {
 
 // Création d'une fonction asynchrone pour connecter un utilisateur
 async function login(req, res) {
-    const { password, email } = req.body;
-    check(email, password);
+    let body = req.body;
+    if(!body_is_valid(body)) {
+        return res.status(400).json({
+            text: 'Requête invalide'
+          });
+    }
     
 
     try {
         const findUser = await User.findOne({
-            email
+            email: body.email
         });
 
         // Vérification de l'utilisateur et du mot de passe en même temps pour éviter de valider l'un sant l'autre en cas de "piratage"
-        if(!findUser || !findUser.authenticate(password))
+        if(!findUser || !findUser.authenticate(body.password))
             return res.status(401).json({
                 text: "L'utilisateur ou le mot de passe ne correspondent pas"
             });
@@ -77,7 +93,3 @@ async function login(req, res) {
         });
     }
 }
-
-// Export de nos fonctions
-exports.register = register;
-exports.login = login;
