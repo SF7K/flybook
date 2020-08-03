@@ -26,23 +26,25 @@ const urlencodedParser = bodyParser.urlencoded({
 
 // Définition des CORS
 app.use(function(req, res, next) {
-    res.setHeader(
-      "Access-Control-Allow-Headers",
-      "X-Requested-With,content-type"
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type"
     );
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader(
-      "Access-Control-Allow-Methods",
-      "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-    );
-    res.setHeader("Access-Control-Allow-Credentials", true);
-    next();
-  });
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  next();
+}); 
 
 // Définition du router
 const router = express.Router();
-app.use('/user', router);
-require(__dirname + '/controllers/userController')(router);
+// app.use('/user', router);
+// require(__dirname + '/controllers/userController')(router);
+app.use('/flights', router);
+require(__dirname + '/controllers/flightController')(router);
 
 // Définition et mise en place du port d'écoute
 const port = 8800;
